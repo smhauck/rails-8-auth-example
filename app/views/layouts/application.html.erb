@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Rails 8 Auth Example" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
+    <%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
+    <br>
+
+    <% if authenticated? %>
+
+      <h1>Authenticated</h1>
+      <% if Current.user %><%= Current.user.email_address %><br><% end %>
+      <%= link_to "Change Password", edit_password_url(Current.user.password_reset_token) %>
+      <%= button_to "Sign Out", session_path, method: :delete, class: "nav-link" %>
+
+    <% else %>
+
+      <h1>UnAuthenticated</h1>
+      <%= link_to "Sign Up", new_registration_path, class: "nav-link" %>
+      <br >
+      <%= link_to "Sign In", new_session_path, class: "nav-link" %>
+
+    <% end %>
+
+
+
+    <%= yield %>
+  </body>
+</html>
